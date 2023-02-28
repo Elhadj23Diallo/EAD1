@@ -1,0 +1,64 @@
+{% extends 'base.html' %}
+
+
+{% block content %}
+    <div class="row">
+        <div class="col-md-12">
+            <form class="card card-sm">
+                {% csrf_token %}
+                <div class="card-body row no-gutters align-item-center">
+                    <div class="col">
+                        <input type="search" name="item-name" placeholder="Entrez le nom du produit à rechercher" class="form-control form-control-bordeless">
+                    </div>
+                    <div class="col-auto">
+                        <button type="submit" class="btn btn-primary ">Rechercher</button>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+    <div class="row">
+        <h2>Faites Vos Achats</h2>
+        {% for blog in blogs %}
+            <div class="col-md-3">
+                <div class="card shadow badge-success">
+                    
+                    {% if blog.photo.image %}
+                        <a href="{% url 'view_blog' blog.id%}"><img src="{{blog.photo.image.url}}" width="80%" class="img-top" alt="une image"></a>
+                    {% else %}
+                        <h3>No image</h3>
+                    {% endif %}
+                    <div class="card-body">
+                        <div id="{{blog.id}}" class="card-tittle" style="color: green;">{{blog.id}}</div>
+                        <div id="aa{{blog.id}}" class="card-tittle" style="color: green;">{{blog.title}}</div>
+                        <div id="price{{blog.id}}" style="color: green;" class="card-text"> {{blog.price}}</div>
+                    </div>
+                </div>
+            </div>
+        {% endfor %}
+    </div>
+
+    <div class="row mt-3">
+        <div class="col md-3 offset-md-4">
+            <ul class="pagination">
+                
+                {% if blogs.has_previous %}
+                    <li class="page-item">
+                        <a class="page-link" href="?page={{blogs.previous_page_number}}">Précedent</a>
+                    </li>
+                {% endif %}
+
+                    <li class="page-item active">
+                        <a class="page-link" href="?page={{blogs.number}}">{{blogs.number}}</a>
+                    </li>
+                
+                {% if blogs.has_next %}
+                <li class="page-item">
+                    <a class="page-link" href="?page={{blogs.next_page_number}}">Suivant</a>
+                </li>
+            {% endif %}
+                    
+            </ul>
+        </div>
+    </div>
+{% endblock content %}

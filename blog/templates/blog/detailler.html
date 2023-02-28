@@ -1,0 +1,75 @@
+{% extends 'base.html' %}
+
+
+
+
+{% block content %}
+    <div class="row py-5 mt-5">
+        <div class="col-md-6">
+            <div>
+                <img src="{{product.photo.image.url}}" width="500px" height="500px" alt="">
+            </div>
+        </div>
+        <div class="col-md-6">
+            <div class="text-success">
+                <div id="aa{{product.id}}" class="card-tittle" style="color: green;">{{product.content}}</div>
+            </div>
+            <div class="text-success">
+                <div id="price{{product.id}}" style="color: green;" class="card-text"> {{product.price}}</div>
+            </div>
+            <div class="text-primary display-3">
+                Prix: GNF {{product.price}}
+            </div>
+            <div class="text-success">
+                {{product.content}}
+            </div>
+            <div>
+                {{product.photo.caption}}
+            </div>
+                <button type="submit" id="{{product.id}}" class="btn ted btn-danger">Acheter</button>
+        </div>
+    </div>
+{% endblock %}
+
+{% block js %}
+    <script type="text/javascript">
+        console.log('juste pour tester');
+        if(localStorage.getItem('panier') == null){
+            var panier={};
+        }else{
+            panier = JSON.parse(localStorage.getItem('panier'));
+        }
+        $(document).on('click', '.ted', function(){
+            console.log('ajouter');
+            var item_id = this.id.toString();
+            console.log(item_id);
+            if(panier[item_id] != undefined){
+                quantité = panier[item_id][0] +1;
+                panier[item_id][0] = quantité;
+                panier[item_id][2] += parseFloat(document.getElementById("price" + item_id).innerHTML);                /* panier[item_id] = panier[item_id] + 1; */
+            }else{
+                quantité = 1;
+                prix = parseFloat(document.getElementById("price" + item_id).innerHTML);
+                nom = document.getElementById("aa" + item_id).innerHTML;
+                panier[item_id] = [quantité, nom, prix];
+                /* panier[item_id] = 1; */
+            }
+            console.log(panier);
+            localStorage.setItem('panier', JSON.stringify(panier));
+            document.getElementById('panier').innerHTML = "Panier(" + Object.keys(panier).length + ")";
+        });
+        AfficherList(panier);
+        function AfficherList(panier){
+            var index = 1;
+            var panierString = " ";
+            panierString += '<h5>Voici votre liste</h5>';
+            for(var x in panier){
+                panierString += index;
+                panierString += document.getElementById("aa" + x).innerHTML + " Quantité : " + panier[x][0] + "</br>";
+            }
+            panierString += '<a href="/checkout" class="btn btn-success">Afficher</a>'
+            $('[data-toggle="popover"]').popover();
+            document.getElementById('panier').setAttribute('data-content', panierString);
+        }
+    </script>
+{% endblock %}
